@@ -4,12 +4,12 @@ import io.github.brianmacy.sz.SzBadInputException
 import io.github.brianmacy.sz.SzConfigurationException
 import io.github.brianmacy.sz.SzLogCallback
 import io.github.brianmacy.sz.SzLogCallbackOptions
+import io.github.brianmacy.sz.SzLogFormat
 import io.github.brianmacy.sz.SzLogLevel
 import io.github.brianmacy.sz.SzLogOutput
 import io.github.brianmacy.sz.SzLogRecord
 import io.github.brianmacy.sz.SzLogRegistration
 import io.github.brianmacy.sz.SzLogging
-import io.github.brianmacy.sz.SzLogFormat
 import io.github.brianmacy.sz.internal.Native
 import io.github.brianmacy.sz.internal.NativeLogSink
 import java.io.File

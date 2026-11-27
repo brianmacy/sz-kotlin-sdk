@@ -19,8 +19,13 @@ fn szerrors_json() -> PathBuf {
 
 fn main() {
     let source = szerrors_json();
-    let generated = sz_rust_sdk_ffi::codegen::generate_error_taxonomy(&source)
-        .unwrap_or_else(|e| panic!("generating the error taxonomy from {}: {e}", source.display()));
+    let generated =
+        sz_rust_sdk_ffi::codegen::generate_error_taxonomy(&source).unwrap_or_else(|e| {
+            panic!(
+                "generating the error taxonomy from {}: {e}",
+                source.display()
+            )
+        });
     let out = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR")).join("szerrors_generated.rs");
     std::fs::write(&out, generated).unwrap_or_else(|e| panic!("writing {}: {e}", out.display()));
 

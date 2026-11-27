@@ -15,7 +15,9 @@ use sz_rust_sdk::prelude::*;
 static ENVIRONMENT: Mutex<Option<Arc<SzEnvironmentCore>>> = Mutex::new(None);
 
 fn slot() -> MutexGuard<'static, Option<Arc<SzEnvironmentCore>>> {
-    ENVIRONMENT.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+    ENVIRONMENT
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
 
 /// The active environment.

@@ -29,14 +29,18 @@ public object Truthset {
 
     /** The records of one truth-set file (for example `customers.jsonl`). */
     public fun records(file: String): List<TruthsetRecord> =
-        SenzingRuntime.resourceText("truthset/$file").lineSequence().filter { it.isNotBlank() }.map { line ->
-            val record = Json.parseToJsonElement(line).jsonObject
-            TruthsetRecord(
-                record.getValue("DATA_SOURCE").jsonPrimitive.content,
-                record.getValue("RECORD_ID").jsonPrimitive.content,
-                line,
-            )
-        }.toList()
+        SenzingRuntime
+            .resourceText("truthset/$file")
+            .lineSequence()
+            .filter { it.isNotBlank() }
+            .map { line ->
+                val record = Json.parseToJsonElement(line).jsonObject
+                TruthsetRecord(
+                    record.getValue("DATA_SOURCE").jsonPrimitive.content,
+                    record.getValue("RECORD_ID").jsonPrimitive.content,
+                    line,
+                )
+            }.toList()
 
     /** Every truth-set record, file by file in load order. */
     public fun allRecords(): List<TruthsetRecord> = files.flatMap(::records)

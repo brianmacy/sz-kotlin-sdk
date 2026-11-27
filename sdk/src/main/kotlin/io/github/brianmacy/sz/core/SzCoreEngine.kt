@@ -232,7 +232,6 @@ public class SzCoreEngine internal constructor(
         fun stringsJson(values: Set<String>): String = JsonArray(values.sorted().map(::JsonPrimitive)).toString()
 
         /** Record keys as `[["DATA_SOURCE","RECORD_ID"], ...]`, in ascending order. */
-        fun keysJson(keys: Set<SzRecordKey>): String =
-            Json.encodeToString(keys.sorted().map { listOf(it.dataSourceCode, it.recordId) })
+        fun keysJson(keys: Set<SzRecordKey>): String = Json.encodeToString(keys.sorted().map { listOf(it.dataSourceCode, it.recordId) })
     }
 }

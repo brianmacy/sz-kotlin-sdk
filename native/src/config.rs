@@ -46,7 +46,9 @@ pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_configTemplat
     mut env: EnvUnowned<'local>,
     _class: JClass<'local>,
 ) -> JString<'local> {
-    text(&mut env, |_| Ok(config_manager()?.create_config()?.export()?))
+    text(&mut env, |_| {
+        Ok(config_manager()?.create_config()?.export()?)
+    })
 }
 
 #[unsafe(no_mangle)]

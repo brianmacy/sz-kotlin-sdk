@@ -15,13 +15,13 @@ internal object SzJson {
             explicitNulls = false
         }
 
+    /** Decodes [text]; null (no info returned) decodes as `{}`. */
     fun <T> decode(
         deserializer: DeserializationStrategy<T>,
         text: String?,
     ): T {
-        if (text == null) throw SzJsonException("The engine returned no JSON document to decode.")
         try {
-            return format.decodeFromString(deserializer, text)
+            return format.decodeFromString(deserializer, text ?: "{}")
         } catch (e: SerializationException) {
             throw SzJsonException("Cannot decode ${deserializer.descriptor.serialName}: ${e.message}", e)
         } catch (e: IllegalArgumentException) {

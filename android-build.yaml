@@ -1,0 +1,4 @@
+# The Android build of the JNI library (./gradlew :sdk:cargoBuildAndroid).
+# Android 13 (API 33) is the minimum; arm64-v8a covers current Pixel and Galaxy phones.
+abi: arm64-v8a
+apiLevel: 33

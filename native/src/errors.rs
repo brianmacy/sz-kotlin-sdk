@@ -138,7 +138,10 @@ mod tests {
                 "SzRetryTimeoutExceededError",
             ),
             (SzError::unhandled("x"), "SzUnhandledError"),
-            (SzError::unknown_data_source("x"), "SzUnknownDataSourceError"),
+            (
+                SzError::unknown_data_source("x"),
+                "SzUnknownDataSourceError",
+            ),
             (SzError::environment_destroyed("x"), ENVIRONMENT_DESTROYED),
             (SzError::unknown("x"), "SzError"),
             (SzError::ffi("x"), "SzError"),

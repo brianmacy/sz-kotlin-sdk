@@ -1,0 +1,3 @@
+# Test binaries link libSz; the runner puts $SENZING_DIR/lib on the loader path.
+[target.'cfg(any(target_os = "macos", target_os = "linux"))']
+runner = "tools/with-senzing-lib.sh"

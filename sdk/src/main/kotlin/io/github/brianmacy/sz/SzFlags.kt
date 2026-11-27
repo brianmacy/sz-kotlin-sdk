@@ -44,12 +44,17 @@ public value class SzFlags(
     /** Whether no flag is set. */
     public fun isEmpty(): Boolean = value == 0L
 
-    override fun toString(): String = "SzFlags(0x" + java.lang.Long.toHexString(value).uppercase() + ")"
+    override fun toString(): String =
+        "SzFlags(0x" +
+            java.lang.Long
+                .toHexString(value)
+                .uppercase() + ")"
 
     /** The named flags, generated from `szflags.json`. */
     public companion object {
         /** The default flags for [SzEngine.processRedoRecord]: none (C# `SzRedoDefaultFlags`, not in `szflags.json`). */
         public val REDO_DEFAULT_FLAGS: SzFlags = SzFlags(0L)
+
         /**
          * `SZ_NO_FLAGS` (`0`).
          */

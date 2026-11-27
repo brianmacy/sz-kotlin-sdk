@@ -39,9 +39,13 @@ val jniLibraryDir = rootProject.extra["jniLibraryDir"] as File
  */
 fun cargo(): String =
     System.getenv("CARGO")
-        ?: System.getenv("PATH").orEmpty().split(File.pathSeparator)
+        ?: System
+            .getenv("PATH")
+            .orEmpty()
+            .split(File.pathSeparator)
             .map { File(it, "cargo") }
-            .firstOrNull { it.canExecute() }?.path
+            .firstOrNull { it.canExecute() }
+            ?.path
         ?: "cargo"
 
 /** Builds the JNI library (native/) against the installed runtime's libSz. */
@@ -57,9 +61,10 @@ val cargoBuild by tasks.registering(Exec::class) {
 
 /** The loader path variable that finds libSz beside nothing else: the runtime's lib directory. */
 fun Test.useSenzingRuntime() {
-    val runtime = senzingDir ?: throw GradleException(
-        "No Senzing runtime: set SENZING_DIR or install one (see senzing-runtime.yaml)",
-    )
+    val runtime =
+        senzingDir ?: throw GradleException(
+            "No Senzing runtime: set SENZING_DIR or install one (see senzing-runtime.yaml)",
+        )
     dependsOn(cargoBuild)
     systemProperty("java.library.path", jniLibraryDir.path)
     systemProperty("senzing.dir", runtime.path)
@@ -93,4 +98,44 @@ dokka {
     dokkaSourceSets.configureEach {
         includes.from("Module.md")
     }
+}
+
+/** A `key: value` from android-build.yaml. */
+fun androidSetting(key: String): String =
+    rootDir
+        .resolve("android-build.yaml")
+        .readLines()
+        .first { it.startsWith("$key:") }
+        .substringAfter(":")
+        .trim()
+
+val androidRuntime = System.getenv("SENZING_ANDROID_DIR")?.takeIf { it.isNotBlank() }?.let(::File)
+val androidStubDir = rootDir.resolve("native/target/android-link-stub")
+
+/** Generates the link-time stub libSz.so (only when no Android libSz is given). */
+val androidLinkStub by tasks.registering(Exec::class) {
+    description = "Builds a link-time stub libSz.so for Android from the runtime's C headers."
+    onlyIf { androidRuntime == null }
+    val runtime = senzingDir
+    commandLine(
+        rootDir.resolve("native/tools/android-link-stub.sh").path,
+        runtime?.path ?: "",
+        androidStubDir.path,
+        androidSetting("apiLevel"),
+    )
+    doFirst { if (runtime == null) throw GradleException("No Senzing runtime headers: set SENZING_DIR") }
+}
+
+/**
+ * Builds the JNI library for Android with cargo-ndk (needs ANDROID_NDK_HOME). It links against
+ * the Android libSz in $SENZING_ANDROID_DIR/lib when set, else against a link-time stub
+ * generated from the C headers (native/tools/android-link-stub.sh).
+ */
+val cargoBuildAndroid by tasks.registering(Exec::class) {
+    description = "Builds sz-kotlin-jni for Android (cargo-ndk)."
+    dependsOn(androidLinkStub)
+    workingDir = rootDir.resolve("native")
+    senzingDir?.let { environment("SENZING_DIR", it.path) }
+    environment("SENZING_LIB_PATH", androidRuntime?.resolve("lib")?.path ?: androidStubDir.path)
+    commandLine(cargo(), "ndk", "-t", androidSetting("abi"), "-P", androidSetting("apiLevel"), "build", "--release")
 }

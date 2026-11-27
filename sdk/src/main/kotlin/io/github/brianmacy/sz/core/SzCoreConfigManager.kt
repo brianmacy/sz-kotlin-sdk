@@ -56,8 +56,7 @@ public class SzCoreConfig internal constructor(
 
     override fun getDataSourceRegistry(): String = state.execute { Native.configDataSourceRegistry(current()) }
 
-    override fun registerDataSource(dataSourceCode: String): String =
-        edit { Native.configRegisterDataSource(it, dataSourceCode) }
+    override fun registerDataSource(dataSourceCode: String): String = edit { Native.configRegisterDataSource(it, dataSourceCode) }
 
     override fun unregisterDataSource(dataSourceCode: String) {
         edit { Native.configUnregisterDataSource(it, dataSourceCode) }

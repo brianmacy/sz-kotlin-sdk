@@ -73,7 +73,12 @@ pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_addRecord<'lo
         let data_source_code = string(env, &data_source_code)?;
         let record_id = string(env, &record_id)?;
         let record_definition = string(env, &record_definition)?;
-        Ok(engine.add_record(&data_source_code, &record_id, &record_definition, flags(bits))?)
+        Ok(engine.add_record(
+            &data_source_code,
+            &record_id,
+            &record_definition,
+            flags(bits),
+        )?)
     })
 }
 

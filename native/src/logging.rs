@@ -119,9 +119,7 @@ pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_logLeak<'loca
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_logSetDefaultCallback<
-    'local,
->(
+pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_logSetDefaultCallback<'local>(
     mut env: EnvUnowned<'local>,
     _class: JClass<'local>,
     min_level: jint,

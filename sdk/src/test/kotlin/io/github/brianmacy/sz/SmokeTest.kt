@@ -16,7 +16,13 @@ class SmokeTest {
                 assertTrue(environment.getProduct().getVersion().contains("VERSION"))
                 val engine = environment.getEngine()
                 assertNull(engine.addRecord("CUSTOMERS", "1", """{"NAME_FULL":"Robert Smith","DATE_OF_BIRTH":"1978-12-11"}"""))
-                val info = engine.addRecord("CUSTOMERS", "2", """{"NAME_FULL":"Bob Smith","DATE_OF_BIRTH":"1978-12-11"}""", SzFlags.WITH_INFO)
+                val info =
+                    engine.addRecord(
+                        "CUSTOMERS",
+                        "2",
+                        """{"NAME_FULL":"Bob Smith","DATE_OF_BIRTH":"1978-12-11"}""",
+                        SzFlags.WITH_INFO,
+                    )
                 assertTrue(info!!.contains("AFFECTED_ENTITIES"), info)
                 val entity = engine.getEntity("CUSTOMERS", "1")
                 assertTrue(entity.contains("\"RECORD_ID\":\"2\""), entity)
