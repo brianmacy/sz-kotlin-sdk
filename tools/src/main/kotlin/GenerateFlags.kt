@@ -103,7 +103,11 @@ fun generate(flags: List<Flag>): String {
         |    /** Whether no flag is set. */
         |    public fun isEmpty(): Boolean = value == 0L
         |
-        |    override fun toString(): String = "SzFlags(0x" + java.lang.Long.toHexString(value).uppercase() + ")"
+        |    override fun toString(): String =
+        |        "SzFlags(0x" +
+        |            java.lang.Long
+        |                .toHexString(value)
+        |                .uppercase() + ")"
         |
         |    /** The named flags, generated from `szflags.json`. */
         |    public companion object {
@@ -112,6 +116,8 @@ fun generate(flags: List<Flag>): String {
         |
         """.trimMargin(),
     )
+    // trimMargin drops the trailing blank line; keep one before the first flag (as ktlint does).
+    out.append("\n")
     for (flag in flags) {
         val name = constantName(flag.symbol)
         val definition =
