@@ -51,9 +51,7 @@ public data class SzResolvedEntity(
  * A feature of an entity, with the values it was built from.
  *
  * @property featureDescription The representative description of the feature.
- * @property libraryFeatureId The library feature ID. See also [libraryFeatureRef].
- * @property libraryFeatureRef The library feature ID as a reference (`LIB_FEAT_REF`), when the engine
- *   reports one instead of `LIB_FEAT_ID`: an integer or an opaque string, as text.
+ * @property libraryFeatureId The library feature ID.
  * @property usageType The usage type, for example `HOME` or `MAILING`.
  * @property values The values grouped under this feature.
  */
@@ -61,7 +59,6 @@ public data class SzResolvedEntity(
 public data class SzEntityFeature(
     @SerialName("FEAT_DESC") public val featureDescription: String,
     @SerialName("LIB_FEAT_ID") public val libraryFeatureId: Long? = null,
-    @SerialName("LIB_FEAT_REF") @Serializable(with = SzFeatureRefSerializer::class) public val libraryFeatureRef: String? = null,
     @SerialName("USAGE_TYPE") public val usageType: String? = null,
     @SerialName("FEAT_DESC_VALUES") public val values: List<SzFeatureValue>? = null,
 )
@@ -70,15 +67,12 @@ public data class SzEntityFeature(
  * One value of an [SzEntityFeature].
  *
  * @property featureDescription The value's description.
- * @property libraryFeatureId The library feature ID. See also [libraryFeatureRef].
- * @property libraryFeatureRef The library feature ID as a reference (`LIB_FEAT_REF`), when the engine
- *   reports one instead of `LIB_FEAT_ID`: an integer or an opaque string, as text.
+ * @property libraryFeatureId The library feature ID.
  */
 @Serializable
 public data class SzFeatureValue(
     @SerialName("FEAT_DESC") public val featureDescription: String,
     @SerialName("LIB_FEAT_ID") public val libraryFeatureId: Long? = null,
-    @SerialName("LIB_FEAT_REF") @Serializable(with = SzFeatureRefSerializer::class) public val libraryFeatureRef: String? = null,
 )
 
 /**

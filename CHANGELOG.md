@@ -22,9 +22,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `SzAsyncEngine`: `suspend` functions on a fixed pool of worker threads;
   exports and the redo queue as `Flow`.
 - `kotlinx.serialization` models and typed overloads of the common calls.
-  Feature models carry both the integer feature ID (`libraryFeatureId`, ...)
-  and the feature reference (`libraryFeatureRef`, ...), whichever the engine
-  reports; a reference may be an integer or an opaque string.
 - Android: `./gradlew :sdk:cargoBuildAndroid` builds the arm64-v8a JNI library
   with cargo-ndk (Android 13, API 33).
 - Real-engine tests, examples, Dokka API docs and CI.

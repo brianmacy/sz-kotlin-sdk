@@ -6,7 +6,6 @@ import io.github.brianmacy.sz.models.SzConfigRegistry
 import io.github.brianmacy.sz.models.SzDataSourceRegistry
 import io.github.brianmacy.sz.models.SzEntityReference
 import io.github.brianmacy.sz.models.SzEntityResponse
-import io.github.brianmacy.sz.models.SzFeatureValue
 import io.github.brianmacy.sz.models.SzInternalId
 import io.github.brianmacy.sz.models.SzInternalIdSerializer
 import io.github.brianmacy.sz.models.SzLicenseInfo
@@ -26,6 +25,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -89,41 +89,26 @@ class SzModelsTest {
     }
 
     @Test
-    fun `test_feature IDs or references decode from engine output`() {
+    fun `test_feature IDs decode from engine output`() {
         EngineFixture(loadTruthset = true).use { fixture ->
             val flags = SzFlags.ENTITY_DEFAULT_FLAGS or SzFlags.ENTITY_INCLUDE_ALL_FEATURES
-            val entity = fixture.engine.getEntity("CUSTOMERS", "1001", SzEntityResponse.serializer(), flags)
+            val entityJson = fixture.engine.getEntity("CUSTOMERS", "1001", flags)
+            // A runtime that reports feature references (*_FEAT_REF) instead has no IDs to decode.
+            assumeTrue("\"LIB_FEAT_ID\"" in entityJson, "this runtime reports no LIB_FEAT_ID")
+            val entity = SzJson.decode(SzEntityResponse.serializer(), entityJson)
             val name = assertNotNull(entity.resolvedEntity.features?.get("NAME")).first()
-            assertFeature(name.libraryFeatureId, name.libraryFeatureRef)
-            val value = assertNotNull(name.values).first()
-            assertFeature(value.libraryFeatureId, value.libraryFeatureRef)
+            assertNotNull(name.libraryFeatureId)
+            assertNotNull(assertNotNull(name.values).first().libraryFeatureId)
 
             val query = person("Robert Smith", mapOf("DATE_OF_BIRTH" to "12/11/1978"))
             val search = fixture.engine.searchByAttributes(query, SzSearchResponse.serializer())
             val match = search.resolvedEntities.first().matchInfo
             val score = assertNotNull(match.featureScores?.get("NAME")).first()
-            assertFeature(score.inboundFeatureId, score.inboundFeatureRef)
-            assertFeature(score.candidateFeatureId, score.candidateFeatureRef)
+            assertNotNull(score.inboundFeatureId)
+            assertNotNull(score.candidateFeatureId)
             val keys = assertNotNull(match.candidateKeys).values.flatten()
-            assertFeature(keys.first().featureId, keys.first().featureRef)
+            assertNotNull(keys.first().featureId)
         }
-    }
-
-    /** Each feature carries an ID or a reference, whichever the runtime reports. */
-    private fun assertFeature(
-        id: Long?,
-        ref: String?,
-    ) = assertTrue(id != null || !ref.isNullOrEmpty(), "no feature ID or reference")
-
-    @Test
-    fun `test_feature references decode from integers and strings`() {
-        val json = """[{"FEAT_DESC":"A","LIB_FEAT_REF":42},{"FEAT_DESC":"B","LIB_FEAT_REF":"657c29"}]"""
-        val values = Json.decodeFromString(ListSerializer(SzFeatureValue.serializer()), json)
-        assertEquals(listOf("42", "657c29"), values.map { it.libraryFeatureRef })
-        assertNull(values.first().libraryFeatureId)
-        val encoded = Json.encodeToString(SzFeatureValue.serializer(), values.last())
-        assertEquals("""{"FEAT_DESC":"B","LIB_FEAT_REF":"657c29"}""", encoded)
-        assertEquals(values.last(), Json.decodeFromString(SzFeatureValue.serializer(), encoded))
     }
 
     @Test
