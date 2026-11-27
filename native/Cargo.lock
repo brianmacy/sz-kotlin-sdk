@@ -246,7 +246,7 @@ dependencies = [
 [[package]]
 name = "sz-rust-sdk"
 version = "4.5.0"
-source = "git+https://github.com/brianmacy/sz-rust-sdk?rev=98e94cc7adafa5fb24da7e4a3971e75963c839c4#98e94cc7adafa5fb24da7e4a3971e75963c839c4"
+source = "git+https://github.com/brianmacy/sz-rust-sdk?rev=e3f469e6b3cfdc3e3066b1fadcf323839e6bcda5#e3f469e6b3cfdc3e3066b1fadcf323839e6bcda5"
 dependencies = [
  "bitflags",
  "hex",

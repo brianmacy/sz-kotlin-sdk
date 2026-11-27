@@ -17,7 +17,7 @@ jni = "0.22"
 serde = "1"
 serde_json = "1"
 # Pinned to full commit SHAs; the tag is a human-readable marker only.
-sz-rust-sdk = { git = "https://github.com/brianmacy/sz-rust-sdk", rev = "98e94cc7adafa5fb24da7e4a3971e75963c839c4" } # v4.5.0 + config-ID init, 4.5.0 szerrors.json (brianmacy/sz-rust-sdk#63)
+sz-rust-sdk = { git = "https://github.com/brianmacy/sz-rust-sdk", rev = "e3f469e6b3cfdc3e3066b1fadcf323839e6bcda5" } # main: v4.5.0 + config-ID init, 4.5.0 szerrors.json (brianmacy/sz-rust-sdk#63)
 
 [build-dependencies]
 # The same generator sz-rust-sdk uses: szerrors.json -> SzErrorCategory + classify(code).
