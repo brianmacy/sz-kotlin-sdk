@@ -1,0 +1,4 @@
+# The Senzing demo truth set bundled with the tests (see README.md): its data sources, and its
+# record files in load order.
+dataSources: [CUSTOMERS, REFERENCE, WATCHLIST]
+files: [customers.jsonl, reference.jsonl, watchlist.jsonl]

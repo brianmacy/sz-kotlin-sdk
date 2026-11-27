@@ -1,0 +1,8 @@
+# How the tests lay out a Senzing repository over the runtime in -Dsenzing.dir (its er directory).
+# Paths are relative to that directory; the first that exists wins.
+configPath: [/etc/opt/senzing, etc, resources/templates]
+supportPath: [../data, data]
+resourcePath: resources
+sqliteSchema: resources/schema/szcore-schema-sqlite-create.sql
+# /etc/opt/senzing is used only for the Linux package layout (er directory /opt/senzing/er).
+linuxErDirectory: /opt/senzing/er

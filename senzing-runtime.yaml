@@ -1,0 +1,10 @@
+# Where the build looks for an installed Senzing runtime (its `er` directory: lib/, sdk/,
+# resources/), in order. $SENZING_DIR, when set, comes first.
+candidates:
+  - /opt/homebrew/opt/senzing/er
+  - /usr/local/opt/senzing/er
+  - /opt/homebrew/opt/senzing/runtime/er
+  - /usr/local/opt/senzing/runtime/er
+  - /opt/senzing/er
+# A runtime is recognized by this file under its directory.
+marker: sdk/c/libSz.h

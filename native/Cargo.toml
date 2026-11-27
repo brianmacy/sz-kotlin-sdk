@@ -1,0 +1,28 @@
+[package]
+name = "sz-kotlin-jni"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+description = "JNI bridge between sz-kotlin-sdk and the Senzing engine, through sz-rust-sdk"
+repository = "https://github.com/brianmacy/sz-kotlin-sdk"
+publish = false
+
+[lib]
+name = "sz_kotlin_jni"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+jni = "0.22"
+serde = "1"
+serde_json = "1"
+# Pinned to full commit SHAs; the tag is a human-readable marker only.
+sz-rust-sdk = { git = "https://github.com/brianmacy/sz-rust-sdk", rev = "c7d11be15696f920c7954dbd9c829d1c34c3f783" } # v4.5.0
+
+[build-dependencies]
+# The same generator sz-rust-sdk uses: szerrors.json -> SzErrorCategory + classify(code).
+# The same rev sz-rust-sdk v4.5.0 pins; codegen only (no FFI bindings in a build script).
+sz-rust-sdk-ffi = { git = "https://github.com/brianmacy/sz-rust-sdk-ffi", rev = "f2f36719325d230abe09e4df1b87a5846183c5ac", default-features = false, features = ["codegen"] } # v0.1.1 + logging
+
+[profile.release]
+lto = "thin"
