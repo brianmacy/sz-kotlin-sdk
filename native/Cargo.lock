@@ -246,7 +246,6 @@ dependencies = [
 [[package]]
 name = "sz-rust-sdk"
 version = "4.5.0"
-source = "git+https://github.com/brianmacy/sz-rust-sdk?rev=c7d11be15696f920c7954dbd9c829d1c34c3f783#11bf28faedecd91a2211eaca223f95b2c6592930"
 dependencies = [
  "bitflags",
  "hex",
@@ -254,7 +253,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sz-rust-sdk-ffi",
- "thiserror",
 ]
 
 [[package]]

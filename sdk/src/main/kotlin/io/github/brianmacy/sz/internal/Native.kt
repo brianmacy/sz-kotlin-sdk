@@ -32,6 +32,8 @@ internal object Native {
         instanceName: String,
         settings: String,
         verbose: Boolean,
+        hasConfigId: Boolean,
+        configId: Long,
     )
 
     @JvmStatic external fun envDestroy()
@@ -41,6 +43,8 @@ internal object Native {
     @JvmStatic external fun envInitProduct()
 
     @JvmStatic external fun envInitConfigManager()
+
+    @JvmStatic external fun envInitDiagnostic()
 
     @JvmStatic external fun envGetActiveConfigId(): Long
 

@@ -158,3 +158,12 @@ public suspend fun <T> SzAsyncEngine.searchByAttributes(
     searchProfile: String? = null,
     flags: SzFlags = SzFlags.SEARCH_BY_ATTRIBUTES_DEFAULT_FLAGS,
 ): T = perform { it.searchByAttributes(attributes, deserializer, searchProfile, flags) }
+
+/** Adds or replaces a record given as any serializable value, on a worker thread. */
+public suspend fun <R> SzAsyncEngine.addRecord(
+    dataSourceCode: String,
+    recordId: String,
+    record: R,
+    serializer: SerializationStrategy<R>,
+    flags: SzFlags = SzFlags.ADD_RECORD_DEFAULT_FLAGS,
+): String? = perform { it.addRecord(dataSourceCode, recordId, record, serializer, flags) }

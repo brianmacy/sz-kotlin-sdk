@@ -54,10 +54,14 @@ public data class SzMatchInfo(
 /**
  * The comparison of one inbound feature with one candidate feature.
  *
- * @property inboundFeatureId The library feature ID of the inbound feature.
+ * @property inboundFeatureId The library feature ID of the inbound feature. See also [inboundFeatureRef].
+ * @property inboundFeatureRef The library feature ID of the inbound feature as a reference (`INBOUND_FEAT_REF`), when the engine
+ *   reports one instead of `INBOUND_FEAT_ID`: an integer or an opaque string, as text.
  * @property inboundFeatureDescription The description of the inbound feature.
  * @property inboundFeatureUsageType The usage type of the inbound feature, for example `HOME`.
- * @property candidateFeatureId The library feature ID of the candidate feature.
+ * @property candidateFeatureId The library feature ID of the candidate feature. See also [candidateFeatureRef].
+ * @property candidateFeatureRef The library feature ID of the candidate feature as a reference (`CANDIDATE_FEAT_REF`), when the engine
+ *   reports one instead of `CANDIDATE_FEAT_ID`: an integer or an opaque string, as text.
  * @property candidateFeatureDescription The description of the candidate feature.
  * @property candidateFeatureUsageType The usage type of the candidate feature, for example `HOME`.
  * @property score The score, 0 to 100.
@@ -68,9 +72,11 @@ public data class SzMatchInfo(
 @Serializable
 public data class SzFeatureScore(
     @SerialName("INBOUND_FEAT_ID") public val inboundFeatureId: Long? = null,
+    @SerialName("INBOUND_FEAT_REF") @Serializable(with = SzFeatureRefSerializer::class) public val inboundFeatureRef: String? = null,
     @SerialName("INBOUND_FEAT_DESC") public val inboundFeatureDescription: String? = null,
     @SerialName("INBOUND_FEAT_USAGE_TYPE") public val inboundFeatureUsageType: String? = null,
     @SerialName("CANDIDATE_FEAT_ID") public val candidateFeatureId: Long? = null,
+    @SerialName("CANDIDATE_FEAT_REF") @Serializable(with = SzFeatureRefSerializer::class) public val candidateFeatureRef: String? = null,
     @SerialName("CANDIDATE_FEAT_DESC") public val candidateFeatureDescription: String? = null,
     @SerialName("CANDIDATE_FEAT_USAGE_TYPE") public val candidateFeatureUsageType: String? = null,
     @SerialName("SCORE") public val score: Int? = null,
@@ -82,12 +88,15 @@ public data class SzFeatureScore(
 /**
  * A candidate key shared by a match.
  *
- * @property featureId The library feature ID of the key.
+ * @property featureId The library feature ID of the key. See also [featureRef].
+ * @property featureRef The library feature ID of the key as a reference (`FEAT_REF`), when the engine
+ *   reports one instead of `FEAT_ID`: an integer or an opaque string, as text.
  * @property featureDescription The description of the key.
  */
 @Serializable
 public data class SzCandidateKey(
     @SerialName("FEAT_ID") public val featureId: Long? = null,
+    @SerialName("FEAT_REF") @Serializable(with = SzFeatureRefSerializer::class) public val featureRef: String? = null,
     @SerialName("FEAT_DESC") public val featureDescription: String? = null,
 )
 

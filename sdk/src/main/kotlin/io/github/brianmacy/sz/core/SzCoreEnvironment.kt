@@ -27,9 +27,9 @@ import io.github.brianmacy.sz.internal.Native
  * @param instanceName The name the engine uses in its logs; blank means [DEFAULT_INSTANCE_NAME].
  * @param settings The engine settings JSON; blank means [DEFAULT_SETTINGS].
  * @param verboseLogging Whether the engine logs verbosely.
- * @param configId The configuration to run with, instead of the repository's default. The
- *   engine starts with the default configuration and then switches to this one (as
- *   [reinitialize] does), so the repository needs a default configuration.
+ * @param configId The registered configuration the engine and diagnostic start with, instead of
+ *   the repository's default. An unregistered ID is reported by the first call that starts the
+ *   engine or diagnostic.
  */
 public class SzCoreEnvironment(
     instanceName: String = DEFAULT_INSTANCE_NAME,
@@ -49,8 +49,6 @@ public class SzCoreEnvironment(
     private val subsystems = Subsystems()
 
     private class Subsystems {
-        /** Whether the engine (`Sz_init`, shared by the engine and diagnostic) is initialized. */
-        var engineStarted = false
         var product: SzCoreProduct? = null
         var engine: SzCoreEngine? = null
         var configManager: SzCoreConfigManager? = null
@@ -64,7 +62,7 @@ public class SzCoreEnvironment(
                     "Only one active SzEnvironment is permitted per process; destroy the existing instance first.",
                 )
             }
-            Native.envCreate(this.instanceName, this.settings, verboseLogging)
+            Native.envCreate(this.instanceName, this.settings, verboseLogging, configId != null, configId ?: 0)
             active = this
         }
     }
@@ -80,7 +78,7 @@ public class SzCoreEnvironment(
 
     override fun getEngine(): SzEngine =
         initializeOnce({ it.engine }) {
-            startEngine(it)
+            Native.envInitEngine()
             SzCoreEngine(state).also { engine -> it.engine = engine }
         }
 
@@ -92,32 +90,26 @@ public class SzCoreEnvironment(
 
     override fun getDiagnostic(): SzDiagnostic =
         initializeOnce({ it.diagnostic }) {
-            startEngine(it)
+            Native.envInitDiagnostic()
             SzCoreDiagnostic(state).also { diagnostic -> it.diagnostic = diagnostic }
         }
 
     override fun getLogging(): SzLogging = SzCoreLogging
 
-    override fun getActiveConfigId(): Long =
-        state.execute {
-            synchronized(subsystems) { startEngine(subsystems) }
-            Native.envGetActiveConfigId()
-        }
+    override fun getActiveConfigId(): Long = state.execute { Native.envGetActiveConfigId() }
 
     override fun reinitialize(configId: Long): Unit =
         state.execute {
-            synchronized(subsystems) {
-                if (subsystems.engineStarted) Native.envReinitialize(configId)
-                // Recorded only on success; an engine started later uses it.
-                state.configId = configId
-            }
+            // Starts the engine first if needed (as in the C# SDK), so the ID is always checked.
+            Native.envReinitialize(configId)
+            // Recorded only on success.
+            state.configId = configId
         }
 
     override fun destroy() {
         state.destroy {
             synchronized(subsystems) {
                 Native.envDestroy()
-                subsystems.engineStarted = false
                 subsystems.product = null
                 subsystems.engine = null
                 subsystems.configManager = null
@@ -130,14 +122,6 @@ public class SzCoreEnvironment(
     }
 
     override val isDestroyed: Boolean get() = state.isDestroyed
-
-    /** Starts the engine once (with the recorded configuration, if any); caller holds [subsystems]. */
-    private fun startEngine(cache: Subsystems) {
-        if (cache.engineStarted) return
-        Native.envInitEngine()
-        state.configId?.let(Native::envReinitialize)
-        cache.engineStarted = true
-    }
 
     private fun <T : Any> initializeOnce(
         existing: (Subsystems) -> T?,

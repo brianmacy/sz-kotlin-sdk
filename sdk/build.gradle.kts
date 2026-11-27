@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 
 plugins {
     `java-library`
@@ -15,6 +16,9 @@ version = "0.1.0"
 kotlin {
     jvmToolchain(17)
     explicitApi()
+    // Interface defaults compile to JVM default methods only: Java callers use them directly,
+    // with no DefaultImpls bridge classes.
+    compilerOptions { jvmDefault.set(JvmDefaultMode.NO_COMPATIBILITY) }
 }
 
 dependencies {
@@ -75,6 +79,8 @@ fun Test.useSenzingRuntime() {
 tasks.test {
     useJUnitPlatform()
     useSenzingRuntime()
+    // An external resolution fixture set for EndToEndTest (skipped when unset; see end-to-end.yaml).
+    System.getenv("RESOLUTION_FIXTURES_DIR")?.let { systemProperty("resolution.fixtures.dir", it) }
     // One engine per process: test classes run one at a time in a single JVM.
     maxParallelForks = 1
     testLogging {

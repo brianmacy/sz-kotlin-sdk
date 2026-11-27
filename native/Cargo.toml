@@ -26,3 +26,7 @@ sz-rust-sdk-ffi = { git = "https://github.com/brianmacy/sz-rust-sdk-ffi", rev = 
 
 [profile.release]
 lto = "thin"
+
+# TEMPORARY: local verification of sz-rust-sdk feat/config-id-init-parity; replace with the pushed rev.
+[patch."https://github.com/brianmacy/sz-rust-sdk"]
+sz-rust-sdk = { path = "../../sz-rust-sdk" }

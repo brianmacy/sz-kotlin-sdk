@@ -41,7 +41,12 @@ pub fn config_manager() -> Outcome<Box<dyn SzConfigManager>> {
     Ok(current()?.get_config_manager()?)
 }
 
-fn create(instance_name: &str, settings: &str, verbose: bool) -> Outcome<()> {
+fn create(
+    instance_name: &str,
+    settings: &str,
+    verbose: bool,
+    config_id: Option<i64>,
+) -> Outcome<()> {
     let mut slot = slot();
     if slot.is_some() {
         return Err(Raised::new(
@@ -50,11 +55,14 @@ fn create(instance_name: &str, settings: &str, verbose: bool) -> Outcome<()> {
         )
         .into());
     }
-    *slot = Some(SzEnvironmentCore::get_instance(
-        instance_name,
-        settings,
-        verbose,
-    )?);
+    *slot = Some(
+        SzEnvironmentCore::builder()
+            .module_name(instance_name)
+            .settings(settings)
+            .verbose_logging(verbose)
+            .config_id(config_id)
+            .build()?,
+    );
     Ok(())
 }
 
@@ -73,11 +81,18 @@ pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_envCreate<'lo
     instance_name: JString<'local>,
     settings: JString<'local>,
     verbose: jboolean,
+    has_config_id: jboolean,
+    config_id: jlong,
 ) {
     run(&mut env, |env| {
         let instance_name = string(env, &instance_name)?;
         let settings = string(env, &settings)?;
-        create(&instance_name, &settings, verbose)
+        create(
+            &instance_name,
+            &settings,
+            verbose,
+            has_config_id.then_some(config_id),
+        )
     })
 }
 
@@ -111,6 +126,14 @@ pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_envInitConfig
     _class: JClass<'local>,
 ) {
     run(&mut env, |_| config_manager().map(drop))
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_io_github_brianmacy_sz_internal_Native_envInitDiagnostic<'local>(
+    mut env: EnvUnowned<'local>,
+    _class: JClass<'local>,
+) {
+    run(&mut env, |_| Ok(current()?.get_diagnostic().map(drop)?))
 }
 
 #[unsafe(no_mangle)]

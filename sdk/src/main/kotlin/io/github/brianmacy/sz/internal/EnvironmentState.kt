@@ -107,9 +107,7 @@ internal class EnvironmentState(
     private fun runDeferredTeardown() {
         deferredTeardown.getAndSet(null)?.let(::destroy)
     }
-
-    private companion object {
-        /** Whether the current thread is inside an SDK call. */
-        val callDepth: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }
-    }
 }
+
+/** Whether the current thread is inside an SDK call. */
+private val callDepth: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }

@@ -1,0 +1,6 @@
+# EndToEndTest: an external resolution fixture set, in the directory given by the
+# resolution.fixtures.dir system property (RESOLUTION_FIXTURES_DIR in the Gradle build).
+# records: JSONL Senzing records; expected: YAML with groups, linked, possible_matches and
+# never_together (lists of record-ID sets).
+records: synthetic-contacts.jsonl
+expected: expected-results.yaml
