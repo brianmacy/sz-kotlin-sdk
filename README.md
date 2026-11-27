@@ -57,7 +57,7 @@ installer for the non-interactive acceptance setting.
 
 ## Build
 
-The SDK is not published to a package repository yet: build it from source.
+The SDK is not published to a package repository: build it from source.
 The build finds the runtime through `$SENZING_DIR` (the runtime's `er`
 directory), then the locations in [senzing-runtime.yaml](senzing-runtime.yaml)
 (the Homebrew cask, then `/opt/senzing/er`).
